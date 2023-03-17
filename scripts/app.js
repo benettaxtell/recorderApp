@@ -2,13 +2,13 @@
 
 /***
 OVERALL TODO:
--shift record/stop buttons to indicate recording (flashing on record/recording?)
--format so start/stop are portholes in a spaceship
--keep screen on (with empty 1sec video?)
--shift backup to every 5 minutes
--CHECK UPLOAD SIZE LIMIT
--add confirm to stop record (can't happen with single click)
-- upload every 5 min, start new recording after 4.5 minutes
+- shift record/stop buttons to indicate recording (flashing on record/recording?)
+- format so start/stop are portholes in a spaceship
+- keep screen on (with empty 1sec video?)
+- shift backup to every 5 minutes
+- CHECK UPLOAD SIZE LIMIT
+- add confirm to stop record (can't happen with single click)
+XX upload every 5 min, start new recording after 4.5 minutes
 	so overlap, but no large files
 ***/
 
@@ -22,6 +22,7 @@ let recorders = []
 let timers = []
 let audio_backup
 
+//EVENTUALLY WILL BE MADE LONGER
 const AUDIO_DUR = 5 * 1000 + (1*1000) //seems to need a 1 second buffer?
 const BACKUP_INT = 4 * 1000
 
@@ -37,6 +38,9 @@ if (navigator.mediaDevices.getUserMedia) {
 
   let onSuccess = function(stream) {
     record.onclick = function() {
+      //keep screen on
+	  document.querySelector('#screenon').play()
+		
       // generate a new file every 5s
 	  record_and_send(stream)
       audio_backup = setInterval(function() {record_and_send(stream)}, BACKUP_INT);
@@ -75,7 +79,6 @@ if (navigator.mediaDevices.getUserMedia) {
    console.log('getUserMedia not supported on your browser!');
 }
 
-//TODO UPDATE WITH THIS TO MAKE NEW RECORDER EVERY 4.5 min for 5 min
 function record_and_send(stream) {
   const recorder = new MediaRecorder(stream);
   recorders.push(recorder)
