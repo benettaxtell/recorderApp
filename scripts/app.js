@@ -21,18 +21,14 @@ const mainSection = document.querySelector('.main-controls');
 let recorders = []
 let timers = []
 let audio_backup
-//let next_audio
-// disable stop button while not recording
 
+const AUDIO_DUR = 5 * 1000 + (1*1000) //seems to need a 1 second buffer?
+const BACKUP_INT = 4 * 1000
+
+// disable stop button while not recording
 stop.disabled = true;
 
-// visualiser setup - create web audio api context and canvas
-
-//let audioCtx;
-//const canvasCtx = canvas.getContext("2d");
-
 //main block for doing the audio recording
-
 if (navigator.mediaDevices.getUserMedia) {
   console.log('getUserMedia supported.');
 
@@ -40,15 +36,10 @@ if (navigator.mediaDevices.getUserMedia) {
   let chunks = [];
 
   let onSuccess = function(stream) {
-    const mediaRecorder = new MediaRecorder(stream);
-    const mediaRecorderB = new MediaRecorder(stream);
-
-    //visualize(stream);
-
     record.onclick = function() {
       // generate a new file every 5s
 	  record_and_send(stream)
-      audio_backup = setInterval(function() {record_and_send(stream)}, 4000);
+      audio_backup = setInterval(function() {record_and_send(stream)}, BACKUP_INT);
       record.style.background = "red";
 
       stop.disabled = false;
@@ -56,40 +47,22 @@ if (navigator.mediaDevices.getUserMedia) {
     }
 
     stop.onclick = function() {
-      //mediaRecorder.stop();
+	  //stop main interval
       clearInterval(audio_backup);
-	  for (let r in recorders) {
-		  recorders[r].stop()
-	  }
+      //clear remaining timers and recorders
 	  for (let t in timers) {
 		  clearTimeout(timers[t])
 	  }
-	  //console.log(mediaRecorder.state);
-      //console.log("recorder stopped");
-      record.style.background = "";
+	  for (let r in recorders) {
+		  recorders[r].stop()
+	  }
+	  
+	  record.style.background = "";
       record.style.color = "";
-      // mediaRecorder.requestData();
-
+      
       stop.disabled = true;
       record.disabled = false;
     }
-
-    //mediaRecorder.onstop = function(e) {
-      //console.log("data available after MediaRecorder.stop() called.");
-	  
-      //clearInterval(audio_backup);
-    //}
-	
-	//TODO: here chunks is updated, chunks can be turned into an audio file
-	//TODO: every 5 minutes, copy chunks (so it can keep updating), get the blob
-	//into audio file and push that to server. DO NOT OVERWRITE.
-    //mediaRecorder.ondataavailable = function(e) {
-    //  chunks.push(e.data);
-	  
-	//  pushAudio(chunks)
-    //}
-
-
   }
 
   let onError = function(err) {
@@ -109,7 +82,7 @@ function record_and_send(stream) {
   const chunks = [];
   recorder.ondataavailable = e => chunks.push(e.data);
   recorder.onstop = e => pushAudio(chunks);
-  let timeout = setTimeout(()=> recorder.stop(), 6000); // we'll have a 5s media file
+  let timeout = setTimeout(()=> recorder.stop(), AUDIO_DUR);
   timers.push(timeout)
   recorder.start();
 }
@@ -129,68 +102,4 @@ function pushAudio(all_chunks) {
   formdata.append('audio', bkp_blob)
   xhr.send(formdata);
   console.log("audio backed up");
-
 }
-
-function visualize(stream) {
-  if(!audioCtx) {
-    audioCtx = new AudioContext();
-  }
-
-  const source = audioCtx.createMediaStreamSource(stream);
-
-  const analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 2048;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-
-  source.connect(analyser);
-  //analyser.connect(audioCtx.destination);
-
-  draw()
-
-  function draw() {
-    const WIDTH = canvas.width
-    const HEIGHT = canvas.height;
-
-    requestAnimationFrame(draw);
-
-    analyser.getByteTimeDomainData(dataArray);
-
-    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-    canvasCtx.beginPath();
-
-    let sliceWidth = WIDTH * 1.0 / bufferLength;
-    let x = 0;
-
-
-    for(let i = 0; i < bufferLength; i++) {
-
-      let v = dataArray[i] / 128.0;
-      let y = v * HEIGHT/2;
-
-      if(i === 0) {
-        canvasCtx.moveTo(x, y);
-      } else {
-        canvasCtx.lineTo(x, y);
-      }
-
-      x += sliceWidth;
-    }
-
-    canvasCtx.lineTo(canvas.width, canvas.height/2);
-    canvasCtx.stroke();
-
-  }
-}
-
-window.onresize = function() {
-  canvas.width = mainSection.offsetWidth;
-}
-
-window.onresize();
