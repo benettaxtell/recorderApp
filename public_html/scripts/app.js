@@ -22,6 +22,7 @@ let recorders = []
 let timers = []
 let audio_backup
 let need_confirm = true;
+let last_rec = false;
 //EVENTUALLY WILL BE MADE LONGER
 const AUDIO_DUR = 5 * 1000 + (1*1000) //seems to need a 1 second buffer?
 const BACKUP_INT = 4 * 1000
@@ -53,6 +54,7 @@ if (navigator.mediaDevices.getUserMedia) {
 	  
 	  stop.classList.remove('active')
 	  need_confirm = true;	  
+	  last_rec = false;
     }
 
     stop.onclick = function() {
@@ -62,16 +64,20 @@ if (navigator.mediaDevices.getUserMedia) {
         //stop.style.background ='red'
 		need_confirm = false
 	  } else {
+	    
+	    for (let r in recorders) {
+		  if (r == recorders.length - 1){
+			  last_rec = true
+		  }
+	      recorders[r].stop()
+	    }
 	    //stop main interval
         clearInterval(audio_backup);
         //clear remaining timers and recorders
 	    for (let t in timers) {
 	      clearTimeout(timers[t])
 	    }
-	    for (let r in recorders) {
-	      recorders[r].stop()
-	    }
-	  
+		
 	    record.classList.remove('active');
 	    //record.style.background = '';
         //record.style.color = '';
@@ -83,7 +89,6 @@ if (navigator.mediaDevices.getUserMedia) {
 		
 		stop.disabled = true;
         record.disabled = false;
-
 	  }
     }
   }
@@ -111,17 +116,22 @@ function record_and_send(stream) {
 
 function pushAudio(all_chunks) {
   let bkp_blob = new Blob(all_chunks, { 'type' : 'audio/wav' });
+  let formdata = new FormData()
+  formdata.append('audio', bkp_blob)
   let xhr = new XMLHttpRequest();
-  xhr.open('POST', '/send_audio', true);
+  if (last_rec) {
+    xhr.open('POST', '/send_last_audio', true);
+    setTimeout(() => xhr.send(formdata), 500)
+	last_rec = false
+  } else {
+    xhr.open('POST', '/send_audio', true);
+    xhr.send(formdata);	
+  }
+  console.log("audio backed up");
   
   /*xhr.onreadystatechange = function() {//Call a function when the state changes.
     if(xhr.readyState == 4 && xhr.status == 200) {
         console.log(xhr.responseText);
     }
   }*/
-  
-  let formdata = new FormData()
-  formdata.append('audio', bkp_blob)
-  xhr.send(formdata);
-  console.log("audio backed up");
 }
