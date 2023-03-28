@@ -16,7 +16,7 @@ app.use(express.static(__dirname));
 app.use(express.static(__dirname+'/public_html'));
 app.use(fileupload());
 
-app.get('/', (request, response) => {
+app.get('/testrec210323', (request, response) => {
   response.sendFile(__dirname+'/public_html/testrec210323.html')
 })
 let count = 0
@@ -29,7 +29,7 @@ app.post('/send_audio', async (request, response) => {
         message: 'No file uploaded'
       })
     } else {
-      moveAudio(request.files.audio)
+      moveAudio(request.files.audio, request.body.token)
 	  
       //send response
       response.send({
@@ -50,8 +50,7 @@ app.post('/send_last_audio', async (request, response) => {
         message: 'No file uploaded'
       })
     } else {
-      moveAudio(request.files.audio) 
-
+      moveAudio(request.files.audio, request.body.token)
       //reset for next recording
 	  count = 0
 	  prefix += 1
@@ -76,8 +75,8 @@ server.listen(port, (err) => {
   console.log(`server is listening on ${port}`)
 })
 
-function moveAudio(audio) {
+function moveAudio(audio, token) {
   count += 5
   //console.log(count)
-  audio.mv('./'+prefix + '_backup_' + count + 'min.wav' )
+  audio.mv('./' + token + '_' + prefix + '_backup_' + count + 'min.wav' )
 }

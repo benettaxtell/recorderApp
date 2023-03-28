@@ -17,6 +17,7 @@ const stop = document.querySelector('.stop');
 const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
+const token = document.querySelector('.wrapper').dataset.token;
 
 let recorders = []
 let timers = []
@@ -118,6 +119,7 @@ function pushAudio(all_chunks) {
   let bkp_blob = new Blob(all_chunks, { 'type' : 'audio/wav' });
   let formdata = new FormData()
   formdata.append('audio', bkp_blob)
+  formdata.append('token', token)
   let xhr = new XMLHttpRequest();
   if (last_rec) {
     xhr.open('POST', '/send_last_audio', true);
