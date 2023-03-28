@@ -21,7 +21,7 @@ const mainSection = document.querySelector('.main-controls');
 let recorders = []
 let timers = []
 let audio_backup
-
+let need_confirm = true;
 //EVENTUALLY WILL BE MADE LONGER
 const AUDIO_DUR = 5 * 1000 + (1*1000) //seems to need a 1 second buffer?
 const BACKUP_INT = 4 * 1000
@@ -44,28 +44,47 @@ if (navigator.mediaDevices.getUserMedia) {
       // generate a new file every 5s
 	  record_and_send(stream)
       audio_backup = setInterval(function() {record_and_send(stream)}, BACKUP_INT);
-      record.style.background = "red";
-
+      //record.style.background = "red";
+	  record.classList.add('active');
+      record.textContent = 'Recording...'
+ 
       stop.disabled = false;
       record.disabled = true;
+	  
+	  stop.classList.remove('active')
+	  need_confirm = true;	  
     }
 
     stop.onclick = function() {
-	  //stop main interval
-      clearInterval(audio_backup);
-      //clear remaining timers and recorders
-	  for (let t in timers) {
-		  clearTimeout(timers[t])
-	  }
-	  for (let r in recorders) {
-		  recorders[r].stop()
-	  }
+	  if (need_confirm) { 
+		stop.classList.add('active')
+	    stop.textContent = 'Touch again to stop'
+        //stop.style.background ='red'
+		need_confirm = false
+	  } else {
+	    //stop main interval
+        clearInterval(audio_backup);
+        //clear remaining timers and recorders
+	    for (let t in timers) {
+	      clearTimeout(timers[t])
+	    }
+	    for (let r in recorders) {
+	      recorders[r].stop()
+	    }
 	  
-	  record.style.background = "";
-      record.style.color = "";
-      
-      stop.disabled = true;
-      record.disabled = false;
+	    record.classList.remove('active');
+	    //record.style.background = '';
+        //record.style.color = '';
+        record.textContent = 'Record'
+		
+	    //stop.style.background = ''
+		stop.textContent = 'Stop'
+        stop.classList.remove('active')
+		
+		stop.disabled = true;
+        record.disabled = false;
+
+	  }
     }
   }
 

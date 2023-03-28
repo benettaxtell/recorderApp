@@ -11,16 +11,17 @@ html, body {
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.8rem;
-  background-image: url("../rocketship.png");
+  background-image: url("../Finalrocketship_2.png");
   background-repeat: no-repeat;
   background-position: center top; 
+  background-size: auto 100%;
 }
 
 .wrapper {
   height: 100%;
   width: 100%;
-  padding-top: 150px;
   display: flex;
+  padding-top: 27.5vh;
   flex-direction: column;
 }
 
@@ -42,27 +43,20 @@ h1, h2 {
   height: 100%;
 }
 
-/*#buttons button {
-  font-size: 1rem;
-  padding: 1rem;
-  width: calc(50% - 0.25rem);
-  height: calc(50% - 0.25rem);
-}*/
-
 #buttons button {
-  min-width: 175px;
-  max-width: 275px;
+  min-width: 75px;
+  max-width: 75px;
   display: inline-block;
   border-radius: 100%;
   overflow: none;
   text-align: center;
-  margin-left: calc(50% - 137px);
-  margin-bottom: 25px;
+  margin-left: calc(50% - 42px);
+  margin-bottom: 9vh;
   padding:0;
-  font-size: 3rem;
-  background: #0088cc;
+  font-size: 1rem;
+  background: #D88738;
   color: white;
-  border: none;
+  border:solid 3px #41403E;
   transition: all 0.2s;
 }
 button:before {
@@ -71,9 +65,6 @@ button:before {
   vertical-align: middle;
   padding-top:100%;
 }
-button {
-}
-
 button:hover, button:focus {
   box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 1);
   background: #0ae;
@@ -84,6 +75,20 @@ button:active {
   transform: translateY(2px);
 }
 
+#buttons button.active {
+	background: red;
+	font-size: 0.75rem;
+}
+
+#buttons button.stop.active {
+  width: 125px;
+  max-width: 125px;
+  margin-left: calc(50% - 75px);
+}
+
+#buttons button.stop.active:before {
+  padding-top: 60%;
+}
 
 section, article {
   display: block;
@@ -99,13 +104,24 @@ audio {
   width: 0;
 }
 
-/* Adjustments for wider screens */
-@media all and (min-width: 800px) {
-  /* Don't take all the space as readability is lost when line length
-     goes past a certain size */
+/* Adjustments for thinner screens */
+@media all and (max-width: 1000px) {
   .wrapper {
-    width: 90%;
-    max-width: 1000px;
-    margin: 0 auto;
+    padding-top: 29vh;
+  }
+  #buttons button {
+    margin-bottom: 10vh;
+  }
+}
+@media all and (max-width: 700px) {
+  body {
+	background-size:cover;
+  }
+  .wrapper {
+    padding-top: 28vh;
+  }
+  #buttons button {
+    margin-bottom: 9vh;
+    font-size: 1rem;
   }
 }

@@ -13,10 +13,11 @@ const requestHandler = (request, response) => {
   response.end('Hello Node.js Server!')
 }
 app.use(express.static(__dirname));
+app.use(express.static(__dirname+'/public_html'));
 app.use(fileupload());
 
 app.get('/', (request, response) => {
-  response.sendFile(__dirname+'/index.html')
+  response.sendFile(__dirname+'/public_html/testrec210323.html')
 })
 let count = 0
 app.post('/send_audio', async (request, response) => {
