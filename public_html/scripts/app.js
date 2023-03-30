@@ -2,12 +2,12 @@
 
 /***
 OVERALL TODO:
-- shift record/stop buttons to indicate recording (flashing on record/recording?)
-- format so start/stop are portholes in a spaceship
-- keep screen on (with empty 1sec video?)
+XX shift record/stop buttons to indicate recording (flashing on record/recording?)
+XX format so start/stop are portholes in a spaceship
+XX keep screen on (with empty 1sec video?)
 - shift backup to every 5 minutes
 - CHECK UPLOAD SIZE LIMIT
-- add confirm to stop record (can't happen with single click)
+XX add confirm to stop record (can't happen with single click)
 XX upload every 5 min, start new recording after 4.5 minutes
 	so overlap, but no large files
 ***/
@@ -18,6 +18,8 @@ const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
 const token = document.querySelector('.wrapper').dataset.token;
+
+var noSleep = new NoSleep();
 
 let recorders = []
 let timers = []
@@ -30,19 +32,22 @@ const BACKUP_INT = 4 * 1000
 
 // disable stop button while not recording
 stop.disabled = true;
-
+//TODO: move this into onrecord event???
+document.addEventListener('click', function enableNoSleep() {
+  document.removeEventListener('click', enableNoSleep, false);
+  noSleep.enable();
+}, false);
 //main block for doing the audio recording
 if (navigator.mediaDevices.getUserMedia) {
   console.log('getUserMedia supported.');
-
+  
   const constraints = { audio: true };
   let chunks = [];
 
   let onSuccess = function(stream) {
     record.onclick = function() {
       //keep screen on
-	  document.querySelector('#screenon').play()
-		
+	  
       // generate a new file every 5s
 	  record_and_send(stream)
       audio_backup = setInterval(function() {record_and_send(stream)}, BACKUP_INT);
@@ -90,6 +95,8 @@ if (navigator.mediaDevices.getUserMedia) {
 		
 		stop.disabled = true;
         record.disabled = false;
+		
+		noSleep.disable();
 	  }
     }
   }

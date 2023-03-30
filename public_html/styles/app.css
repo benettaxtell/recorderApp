@@ -99,11 +99,6 @@ audio {
   margin: 1rem auto 0.5rem;
 }
 
-#screenon {
-  height: 0;
-  width: 0;
-}
-
 /* Adjustments for thinner screens */
 @media all and (max-width: 1000px) {
   .wrapper {
