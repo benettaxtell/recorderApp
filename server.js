@@ -4,20 +4,27 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-var server = require('http').createServer(app);
-
-const port = 8000
+var server = require('http').createServer(app, function (req, res) {
+  //res.writeHead(200, {'Content-Type': 'text/plain'});
+  //res.write('Hello World!');
+  //res.end(););
+  console.log(req.get('host'))
+  console.log(req.originalUrl)
+})
+const port = 80
 
 const requestHandler = (request, response) => {
   console.log(request.url)
   response.end('Hello Node.js Server!')
 }
 app.use(express.static(__dirname));
-app.use(express.static(__dirname+'/public_html'));
+//console.log(__dirname)
+//console.log(__dirname+'/../languagehead.com/RBrecorder')
+app.use(express.static(__dirname+'/../public/RBrecorder'));
 app.use(fileupload());
 
-app.get('/testrec210323', (request, response) => {
-  response.sendFile(__dirname+'/public_html/testrec210323.html')
+app.get('/test', (request, response) => {
+  response.sendFile('testrec210323.html', {'root': __dirname + '/../public/RBrecorder/'})
 })
 let count = 0
 let prefix = 1
@@ -66,13 +73,14 @@ app.post('/send_last_audio', async (request, response) => {
     response.status(500).send(err)
   }
 })
-
-server.listen(port, (err) => {
+var listener = server.listen(port, (err) => {
   if (err) {
     return console.log('something bad happened', err)
   }
 
   console.log(`server is listening on ${port}`)
+  console.log(listener.address().port)
+  console.log(listener.address())
 })
 
 function moveAudio(audio, token) {
