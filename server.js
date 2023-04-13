@@ -21,9 +21,22 @@ app.use(express.static(__dirname));
 app.use(express.static(__dirname+'/public'));
 app.use(fileupload());
 
-app.get('/Astro1', (request, response) => {
-  response.sendFile('Astro1.html', {'root': __dirname + '/public'})
+app.get('/setPages', (request, response) => {
+  let active_pages = JSON.parse(fs.readFileSync(path.join(__dirname+ '/spacealphabet.json'), 'utf8'))
+
+  for (let label in active_pages) {
+    if (active_pages[label].active == 1) {
+      let page = label + active_pages[label].key
+      app.get('/' + page, (request, response) => {
+        response.sendFile(path.join(__dirname+'/public/' + page + '.html'))
+      })
+    }
+  }
+  response.sendStatus(200)
 })
+
+
+
 let count = 0
 let prefix = 1
 app.post('/send_audio', async (request, response) => {
