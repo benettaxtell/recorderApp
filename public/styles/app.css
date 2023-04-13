@@ -21,7 +21,7 @@ body {
   height: 100%;
   width: 100%;
   display: flex;
-  padding-top: 27.5vh;
+  padding-top: 28vh;
   flex-direction: column;
 }
 
@@ -44,14 +44,14 @@ h1, h2 {
 }
 
 #buttons button {
-  min-width: 75px;
-  max-width: 75px;
+  min-width: 100px;
+  max-width: 100px;
   display: inline-block;
   border-radius: 100%;
   overflow: none;
   text-align: center;
-  margin-left: calc(50% - 42px);
-  margin-bottom: 9vh;
+  margin-left: calc(50% - 55px);
+  margin-bottom: 8vh;
   padding:0;
   font-size: 1rem;
   background: #D88738;
@@ -83,7 +83,7 @@ button:active {
 #buttons button.stop.active {
   width: 125px;
   max-width: 125px;
-  margin-left: calc(50% - 75px);
+  margin-left: calc(50% - 70px);
 }
 
 #buttons button.stop.active:before {
@@ -105,7 +105,7 @@ audio {
     padding-top: 29vh;
   }
   #buttons button {
-    margin-bottom: 10vh;
+    margin-bottom: 8vh;
   }
 }
 @media all and (max-width: 700px) {
@@ -116,7 +116,10 @@ audio {
     padding-top: 28vh;
   }
   #buttons button {
-    margin-bottom: 9vh;
+	min-width: 80px;
+	max-width: 80px;
+    margin-left: calc(50% - 42px);
+    margin-bottom: 8vh;
     font-size: 1rem;
   }
 }
