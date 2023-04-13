@@ -17,7 +17,6 @@ const stop = document.querySelector('.stop');
 const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
-const logging = document.querySelector('#logging');
 const token = document.querySelector('.wrapper').dataset.token;
 
 var noSleep = new NoSleep();
@@ -33,35 +32,23 @@ const BACKUP_INT = 4 * 1000
 
 // disable stop button while not recording
 stop.disabled = true;
-//alert('here')
-/*if (!navigator.mediaDevices) {
-  alert("Sorry, getUserMedia is not supported");
-  
-}*/
+
 //main block for doing the audio recording
 if (navigator.mediaDevices.getUserMedia) {
-	//alert('getUserMedia supported!')
   console.log('getUserMedia supported.');
-  logging.textContent = 'getUserMedia supported'
   
   const constraints = { audio: true };
   let chunks = [];
 
   let onSuccess = function(stream) {
     record.onclick = function() {
-		logging.textContent = 'recording?'
   
-		//TODO: move this into onrecord event???
-		//document.addEventListener('click', function enableNoSleep() {
-		  //document.removeEventListener('click', enableNoSleep, false);
-		  noSleep.enable();
-		//}, false);
       //keep screen on
+	  noSleep.enable();
 	  
       // generate a new file every 5s
 	  record_and_send(stream)
       audio_backup = setInterval(function() {record_and_send(stream)}, BACKUP_INT);
-      //record.style.background = "red";
 	  record.classList.add('active');
       record.textContent = 'Recording...'
  
@@ -95,11 +82,8 @@ if (navigator.mediaDevices.getUserMedia) {
 	    }
 		
 	    record.classList.remove('active');
-	    //record.style.background = '';
-        //record.style.color = '';
         record.textContent = 'Record'
 		
-	    //stop.style.background = ''
 		stop.textContent = 'Stop'
         stop.classList.remove('active')
 		

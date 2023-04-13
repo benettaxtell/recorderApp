@@ -18,13 +18,11 @@ const requestHandler = (request, response) => {
   response.end('Hello Node.js Server!')
 }
 app.use(express.static(__dirname));
-//console.log(__dirname)
-//console.log(__dirname+'/../languagehead.com/RBrecorder')
-app.use(express.static(__dirname+'/../public/RBrecorder'));
+app.use(express.static(__dirname+'/public'));
 app.use(fileupload());
 
-app.get('/test', (request, response) => {
-  response.sendFile('testrec210323.html', {'root': __dirname + '/../public/RBrecorder/'})
+app.get('/Astro1', (request, response) => {
+  response.sendFile('Astro1.html', {'root': __dirname + '/public'})
 })
 let count = 0
 let prefix = 1
@@ -79,12 +77,9 @@ var listener = server.listen(port, (err) => {
   }
 
   console.log(`server is listening on ${port}`)
-  console.log(listener.address().port)
-  console.log(listener.address())
 })
 
 function moveAudio(audio, token) {
   count += 5
-  //console.log(count)
   audio.mv('./' + token + '_' + prefix + '_backup_' + count + 'min.wav' )
 }
